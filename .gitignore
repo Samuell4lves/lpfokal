@@ -1,0 +1,10 @@
+# Local tooling
+.claude/
+
+# OS
+Thumbs.db
+desktop.ini
+.DS_Store
+
+# Vídeo não utilizado (substituído pela animação Three.js)
+assets/hero.mp4
