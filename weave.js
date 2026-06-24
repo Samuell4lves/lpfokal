@@ -59,11 +59,11 @@ function initWeave(mount) {
     originalPositions[i * 3 + 1] = y;
     originalPositions[i * 3 + 2] = z;
 
-    // Paleta Fokal: azul (#0051C5 ≈ h.59) com brilhos ciano pontuais
-    const sparkle = Math.random() > 0.93;
-    const hue = sparkle ? 0.5 + Math.random() * 0.03 : 0.58 + Math.random() * 0.055;
-    const sat = 0.85;
-    const light = sparkle ? 0.74 : 0.4 + Math.random() * 0.2;
+    // Paleta Fokal (tema claro): azul encorpado p/ ler como malha sobre fundo claro
+    const sparkle = Math.random() > 0.9;
+    const hue = sparkle ? 0.56 + Math.random() * 0.03 : 0.6 + Math.random() * 0.04;
+    const sat = 0.98;
+    const light = sparkle ? 0.46 : 0.3 + Math.random() * 0.1;
     color.setHSL(hue, sat, light);
     colors[i * 3] = color.r;
     colors[i * 3 + 1] = color.g;
@@ -74,9 +74,9 @@ function initWeave(mount) {
   geometry.setAttribute("color", new THREE.BufferAttribute(colors, 3));
 
   const material = new THREE.PointsMaterial({
-    size: 0.02,
+    size: 0.025,
     vertexColors: true,
-    blending: THREE.AdditiveBlending,
+    blending: THREE.NormalBlending,
     transparent: true,
     depthWrite: false,
     opacity: 0.95,

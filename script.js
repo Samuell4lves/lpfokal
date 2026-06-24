@@ -187,36 +187,50 @@
     });
   }
 
-  /* ---------- 10. Submit do formulário ---------- */
-  /* TODO integração: trocar o bloco abaixo pelo POST do seu backend /
-     CRM / e-mail. Pixel Meta e GA já são disparados em conversão. */
+  /* ---------- 10. Submit do formulário → WhatsApp ---------- */
+  /* 👉 SEU NÚMERO DE WHATSAPP — só dígitos, com DDI 55 + DDD.
+     Exemplo: 5531991234567  (Brasil 55, DDD 31, número 991234567) */
+  const FOKAL_WHATSAPP = "5531996363008";
+
   const form = document.getElementById("leadForm");
   const success = document.getElementById("formSuccess");
   const submitBtn = document.getElementById("submitBtn");
   if (form) {
+    const originalText = submitBtn.textContent;
     form.addEventListener("submit", (e) => {
       e.preventDefault();
       if (!form.checkValidity()) {
         form.reportValidity();
         return;
       }
-      submitBtn.disabled = true;
-      submitBtn.textContent = "Enviando…";
 
-      // Simulação de envio — substituir por fetch() real.
+      // Monta a mensagem com os dados preenchidos
+      const get = (id) => (document.getElementById(id)?.value || "").trim();
+      const linhas = [
+        "*Novo diagnóstico — Fokal*",
+        `*Nome:* ${get("nome")}`,
+        `*WhatsApp:* ${get("whatsapp")}`,
+        `*E-mail:* ${get("email")}`,
+      ];
+      if (get("empresa")) linhas.push(`*Empresa:* ${get("empresa")}`);
+      if (get("segmento")) linhas.push(`*Segmento:* ${get("segmento")}`);
+      if (get("necessidade")) linhas.push(`*Objetivo:* ${get("necessidade")}`);
+      const texto = encodeURIComponent(linhas.join("\n"));
+      const url = `https://wa.me/${FOKAL_WHATSAPP}?text=${texto}`;
+
+      // Disparo de conversão (hooks prontos p/ Meta Pixel e Google Analytics):
+      if (typeof window.fbq === "function") window.fbq("track", "Lead");
+      if (typeof window.gtag === "function") window.gtag("event", "generate_lead");
+
+      // Abre o WhatsApp (nova aba) já com a mensagem escrita
+      window.open(url, "_blank");
+
+      form.reset();
+      success.hidden = false;
+      submitBtn.textContent = "Enviado ✓";
       setTimeout(() => {
-        // Disparo de conversão (hooks prontos):
-        if (typeof window.fbq === "function") window.fbq("track", "Lead");
-        if (typeof window.gtag === "function") window.gtag("event", "generate_lead");
-
-        form.reset();
-        success.hidden = false;
-        submitBtn.textContent = "Enviado ✓";
-        setTimeout(() => {
-          submitBtn.disabled = false;
-          submitBtn.textContent = "Solicitar avaliação gratuita";
-        }, 2500);
-      }, 900);
+        submitBtn.textContent = originalText;
+      }, 2500);
     });
   }
 })();
